@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 export config_path=${config_path:-/etc/wireguard}

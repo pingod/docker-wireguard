@@ -41,5 +41,5 @@ RUN wget -O /bin/wg-quick $WG_QUICK_URL \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT [ "sh","-x","/usr/local/bin/entrypoint.sh" ]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
 CMD ["wg-quick", "up", "wg0"]
