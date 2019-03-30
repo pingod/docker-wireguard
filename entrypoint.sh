@@ -157,10 +157,7 @@ fi
 
 if [[ $1 != "-a" && $1 != "-d" ]];then
 /bin/bash "$@"
-fi
-
 wg show
-
 # check if Wireguard is running
 if [[ $(wg) ]]
 then
@@ -168,3 +165,7 @@ then
 else
     echo "wireguard is stopped"  # else exit container
 fi
+fi
+
+
+
