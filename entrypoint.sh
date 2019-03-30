@@ -10,27 +10,22 @@ echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
 sysctl -p
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
-build_module{}(
-    (
-    cd /wireguard/src
-    echo "Building the wireguard kernel module..."
-    make module
-    echo "Installing the wireguard kernel module..."
-    make module-install
-    echo "Cleaning up..."
-    make clean
-    )
-
-    echo "Successfully built and installed the wireguard kernel module!"
-
-    # shellcheck disable=SC2068
-    exec $@
-    }
-)
+build_module(){
+cd /wireguard/src
+echo "Building the wireguard kernel module..."
+make module
+echo "Installing the wireguard kernel module..."
+make module-install
+echo "Cleaning up..."
+make clean
+echo "Successfully built and installed the wireguard kernel module!"
+# shellcheck disable=SC2068
+exec $@
+}
 build_module
 
 
-set_config{}(
+set_config(){
 # 创建并进入WireGuard文件夹
 mkdir -p ${config_path} && chmod 0777 ${config_path}
 cd ${config_path}
@@ -78,11 +73,11 @@ PublicKey = $(cat ${config_path}/server_publickey)
 Endpoint = ${wg_ip}:${wg_port}
 AllowedIPs = 0.0.0.0/0, ::0/0
 PersistentKeepalive = 25 " > ${config_path}/client.conf
-)
+}
 set_config
 
 
-add_user{}(
+add_user(){
 # 生成新的客户端密钥对
 wg genkey | tee client0_privatekey | wg pubkey > client0_publickey
 
@@ -116,7 +111,7 @@ PublicKey = $(cat server_publickey)
 Endpoint = ${wg_ip}:${wg_port}
 AllowedIPs = 0.0.0.0/0, ::0/0
 PersistentKeepalive = 25 " > client0.conf
-)
+}
 #add_user
 
 /bin/bash "$@"
