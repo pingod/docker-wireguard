@@ -42,3 +42,22 @@ spec:
                     operator: In
                     values:
                       - dfpdevds2
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: wire
+  namespace: kube-system
+  labels:
+    dce.daocloud.io/app: frpovn
+  annotations: {}
+spec:
+  ports:
+    - name: wire-8080
+      protocol: UDP
+      port: 8080
+      targetPort: 8080
+  selector:
+    dce.daocloud.io/app: frpovn
+    dce.daocloud.io/component: wire
+  type: ClusterIP
