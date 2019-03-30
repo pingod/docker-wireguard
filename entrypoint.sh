@@ -145,6 +145,11 @@ clients_path=${clients_path:-${config_path}/clients}
 sed -i.bak '/'"#${user_name}$"'/,+2d;:go;1,2!{P;$!N;D};N;bgo' ${config_path}/wg0.conf
 rm -fr ${clients_path}/${user_name}
 echo ${clients_path}/${user_name} had deleted
+
+#删除的Peer需要重启
+wg-quick down wg0
+wg-quick up wg0
+wg show
 }
 
 if [[ $1 == "-a" ]];then
