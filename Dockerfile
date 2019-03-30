@@ -7,7 +7,7 @@
 # 	-v /lib/modules:/lib/modules \
 # 	r.j3ss.co/wireguard:install
 
-FROM alpine:latest
+FROM alpine:3.9
 
 RUN apk add --no-cache \
 	build-base \
