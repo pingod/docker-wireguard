@@ -14,19 +14,18 @@ ENV WIREGUARD_VERSION 0.0.20190227
 ENV WG_QUICK_URL https://git.zx2c4.com/WireGuard/plain/src/tools/wg-quick/linux.bash
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories\
-	&& apk add --no-cache --virtual .build-deps \
-	git \
+    && apk add --no-cache --virtual .build-deps \
 	build-base \
 	ca-certificates \
 	elfutils-libelf \
 	libelf-dev \
 	libmnl-dev \
     libmnl \
-    bash \
     wget \
     curl \
     openresolv \
     iptables \
+	&& apk add --no-cache --virtual .build-deps git bash\
 	&& git clone --depth 1 --branch "${WIREGUARD_VERSION}" https://git.zx2c4.com/WireGuard.git /wireguard \
 	&& ( \
 		cd /wireguard/src \
@@ -41,5 +40,5 @@ RUN wget -O /bin/wg-quick $WG_QUICK_URL \
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-ENTRYPOINT [ "bash","/usr/local/bin/entrypoint.sh" ]
+ENTRYPOINT [ "sh","/usr/local/bin/entrypoint.sh" ]
 CMD ["wg-quick", "up", "wg0"]
