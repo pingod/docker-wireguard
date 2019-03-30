@@ -82,6 +82,7 @@ user_name=${user_name:-$1}
 clients_path=${clients_path:-${config_path}/clients}
 #为了计算生成的配置文件中，分配给客户端的ip地址，需要计算下现有的Peer数目
 clients_count=$(cat wg0.conf |grep -io Peer|wc -l)
+(( clients_ip_lite=$clients_count + 2 ))
 
 if [[ ! -f ${clients_path}/${user_name}/${user_name}_privatekey ]];then
 mkdir -p ${clients_path}/${user_name}
@@ -97,7 +98,7 @@ echo "
 [Peer]
 #${user_name}
 PublicKey = $(cat ${clients_path}/${user_name}/${user_name}_publickey)
-AllowedIPs = 10.0.0.${clients_count}/32" >> ${config_path}/wg0.conf
+AllowedIPs = 10.0.0.${clients_ip_lite}/32" >> ${config_path}/wg0.conf
 
 # 新建一个客户端文件，使用新客户端密钥的私钥
 # Address与上面的AllowedIPs保持一致
@@ -106,7 +107,7 @@ AllowedIPs = 10.0.0.${clients_count}/32" >> ${config_path}/wg0.conf
 echo "
 [Interface]
 PrivateKey = $(cat ${clients_path}/${user_name}/${user_name}_privatekey)
-Address = 10.0.0.${clients_count}/24
+Address = 10.0.0.${clients_ip_lite}/24
 DNS = 8.8.8.8
 #k8s中coredns的地址
 DNS = 10.96.0.2
