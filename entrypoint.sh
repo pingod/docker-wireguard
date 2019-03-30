@@ -5,9 +5,6 @@ export config_path=${config_path:-/etc/wireguard}
 export wg_port=${wg_port:-8080}
 export wg_ip=${wg_ip:-127.0.0.1}
 
-
-echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
-sysctl -p
 echo 1 > /proc/sys/net/ipv4/ip_forward
 
 build_module(){
@@ -22,7 +19,7 @@ echo "Successfully built and installed the wireguard kernel module!"
 # shellcheck disable=SC2068
 exec $@
 }
-build_module
+#build_module
 
 
 set_config(){
@@ -114,7 +111,7 @@ PersistentKeepalive = 25 " > client0.conf
 }
 #add_user
 
-/bin/bash "$@"
+/bin/sh "$@"
 
 wg show
 

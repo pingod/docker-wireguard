@@ -25,7 +25,8 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     curl \
     openresolv \
     iptables \
-	&& apk add --no-cache --virtual .build-deps git bash \
+    bash \
+	&& apk add --no-cache --virtual .build-deps git \
 	&& git clone --depth 1 --branch "${WIREGUARD_VERSION}" https://git.zx2c4.com/WireGuard.git /wireguard \
 	&& ( \
 		cd /wireguard/src \
@@ -41,5 +42,5 @@ RUN wget -O /bin/wg-quick $WG_QUICK_URL \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
 RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT [ "sh","/usr/local/bin/entrypoint.sh" ]
+ENTRYPOINT [ "sh","-x","/usr/local/bin/entrypoint.sh" ]
 CMD ["wg-quick", "up", "wg0"]
