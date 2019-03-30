@@ -9,8 +9,13 @@
 
 FROM alpine:3.9
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
-    && apk add --no-cache \
+# https://git.zx2c4.com/WireGuard/refs/
+ENV WIREGUARD_VERSION 0.0.20190227
+ENV WG_QUICK_URL https://git.zx2c4.com/WireGuard/plain/src/tools/wg-quick/linux.bash
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories\
+	&& apk add --no-cache --virtual .build-deps \
+	git \
 	build-base \
 	ca-certificates \
 	elfutils-libelf \
@@ -21,15 +26,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     wget \
     curl \
     openresolv \
-    iptables
-
-# https://git.zx2c4.com/WireGuard/refs/
-ENV WIREGUARD_VERSION 0.0.20190227
-ENV WG_QUICK_URL https://git.zx2c4.com/WireGuard/plain/src/tools/wg-quick/linux.bash
-
-RUN set -x \
-	&& apk add --no-cache --virtual .build-deps \
-		git \
+    iptables \
 	&& git clone --depth 1 --branch "${WIREGUARD_VERSION}" https://git.zx2c4.com/WireGuard.git /wireguard \
 	&& ( \
 		cd /wireguard/src \
