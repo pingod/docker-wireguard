@@ -122,6 +122,11 @@ PersistentKeepalive = 25 " > ${clients_path}/${user_name}/${user_name}.conf
 
 echo ${1}_privatekey had added 
 
+#新添加的Peer需要重启
+wg-quick down wg0
+wg-quick up wg0
+wg show
+
 else
 echo ${1}_privatekey had already exist
 fi
