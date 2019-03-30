@@ -111,7 +111,7 @@ PersistentKeepalive = 25 " > client0.conf
 }
 #add_user
 
-/bin/sh "$@"
+/bin/bash "$@"
 
 wg show
 
