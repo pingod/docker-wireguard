@@ -13,7 +13,7 @@ FROM alpine:3.9
 ENV WIREGUARD_VERSION 0.0.20190227
 ENV WG_QUICK_URL https://git.zx2c4.com/WireGuard/plain/src/tools/wg-quick/linux.bash
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories\
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
     && apk add --no-cache \
 	ca-certificates \
 	elfutils-libelf \
