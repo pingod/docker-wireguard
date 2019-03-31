@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 export config_path=${config_path:-/etc/wireguard}
 export wg_port=${wg_port:-8080}
@@ -90,16 +89,6 @@ mkdir -p ${clients_path}/${user_name}
 # 生成新的客户端密钥对
 wg genkey | tee ${clients_path}/${user_name}/${user_name}_privatekey | wg pubkey > ${clients_path}/${user_name}/${user_name}_publickey
 
-# 在服务端配置文件中加入新的客户端公钥
-# AllowedIPs重新定义一段
-# 一次性复制粘贴，不要分行执行
-
-echo "
-[Peer]
-#${user_name}
-PublicKey = $(cat ${clients_path}/${user_name}/${user_name}_publickey)
-AllowedIPs = 10.0.0.${clients_ip_lite}/32" >> ${config_path}/wg0.conf
-
 # 新建一个客户端文件，使用新客户端密钥的私钥
 # Address与上面的AllowedIPs保持一致
 # Endpoint和之前的一样，为服务器ip和设置好的ListenPort
@@ -120,13 +109,26 @@ Endpoint = ${wg_ip}:${wg_port}
 AllowedIPs = 0.0.0.0/0, ::0/0
 PersistentKeepalive = 25 " > ${clients_path}/${user_name}/${user_name}.conf
 
+# 在服务端配置文件中加入新的客户端公钥
+# AllowedIPs重新定义一段
+# 一次性复制粘贴，不要分行执行
+
+echo "
+[Peer]
+#${user_name}
+PublicKey = $(cat ${clients_path}/${user_name}/${user_name}_publickey)
+AllowedIPs = 10.0.0.${clients_ip_lite}/32" >> ${config_path}/wg0.conf
+
 echo ${1}_privatekey had added 
 
 #新添加的Peer需要重启
-wg-quick down wg0
-wg-quick up wg0
-wg show
+#wg-quick down wg0
+#wg-quick up wg0
 
+#使用wg命令可以实现热加载
+wg set wg0 peer $(cat ${clients_path}/${user_name}/${user_name}_publickey) allowed-ips 10.0.0.${clients_ip_lite}/32
+#wg-quick save wg0
+wg show
 else
 echo ${1}_privatekey had already exist
 fi
@@ -143,13 +145,18 @@ clients_path=${clients_path:-${config_path}/clients}
 #删除匹配的上下一行，并且删除匹配行;由于user_publickey变量里通常含有特殊字符串，如/。目前还没搞定。所以放弃下面方法
 #sed -i.bak '#'"$user_publickey"'#,+1d;:go;1,1!{P;$!N;D};N;bgo' ${config_path}/wg0.conf
 sed -i.bak '/'"#${user_name}$"'/,+2d;:go;1,2!{P;$!N;D};N;bgo' ${config_path}/wg0.conf
-rm -fr ${clients_path}/${user_name}
 echo ${clients_path}/${user_name} had deleted
 
 #删除的Peer需要重启
-wg-quick down wg0
-wg-quick up wg0
+# wg-quick down wg0
+# wg-quick up wg0
+
+#使用wg命令可以实现热加载
+wg set wg0 peer $(cat ${clients_path}/${user_name}/${user_name}_publickey) remove
 wg show
+
+rm -fr ${clients_path}/${user_name}
+
 }
 
 if [[ $1 == "-a" ]];then

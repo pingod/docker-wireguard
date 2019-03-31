@@ -1,5 +1,5 @@
 # WireGuard in Docker
-
+** 传统部署方式可以参考：https://github.com/pingod/wireguard **
 ## Note
 
 -   此镜像需要宿主机内核版本在4.x以上
